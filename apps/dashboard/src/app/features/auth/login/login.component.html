@@ -1,0 +1,29 @@
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 class="auth-title">Sign in</h1>
+    <p class="auth-subtitle">Welcome back. Sign in to continue.</p>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" class="input" placeholder="you@example.com" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <span class="field-error">Valid email required</span>
+        }
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" class="input" placeholder="••••••••" />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <span class="field-error">Required</span>
+        }
+      </div>
+      @if (error$ | async; as err) {
+        <p class="form-error">{{ err }}</p>
+      }
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="form.invalid">Sign in</button>
+    </form>
+    <p class="auth-footer">
+      Don't have an account? <a routerLink="/register">Register</a>
+    </p>
+  </div>
+</div>

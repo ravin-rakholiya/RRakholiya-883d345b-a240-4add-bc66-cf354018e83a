@@ -1,0 +1,56 @@
+<div class="form-card">
+  <h2>Create User</h2>
+  <p class="intro">Owner only. Create a user in an organization with a role.</p>
+
+  @if (loading) {
+    <app-skeleton height="280px" />
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" />
+        <span class="hint">Min 8 chars, upper, lower, number</span>
+      </div>
+      <div class="field">
+        <label for="firstName">First name</label>
+        <input id="firstName" formControlName="firstName" />
+      </div>
+      <div class="field">
+        <label for="lastName">Last name</label>
+        <input id="lastName" formControlName="lastName" />
+      </div>
+      <div class="field">
+        <label for="organizationId">Organization</label>
+        <select id="organizationId" formControlName="organizationId">
+          <option value="">Select organization</option>
+          @for (org of organizations; track org.id) {
+            <option [value]="org.id">{{ org.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="roleId">Role</label>
+        <select id="roleId" formControlName="roleId">
+          <option value="">Select role</option>
+          @for (role of roles; track role.id) {
+            <option [value]="role.id">{{ role.name }}</option>
+          }
+        </select>
+      </div>
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+      @if (success) {
+        <p class="success">{{ success }}</p>
+      }
+      <div class="actions">
+        <button type="submit" [disabled]="form.invalid || submitting">Create User</button>
+        <a routerLink="/admin/audit" class="link">Cancel</a>
+      </div>
+    </form>
+  }
+</div>

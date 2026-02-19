@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+tmp/
+.angular/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test
+coverage/
+.nyc_output/
+*.lcov
+
+# NX
+.nx/cache
+.nx/workspace-data
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Prisma
+prisma/migrations/**/migration_lock.toml
+
+# Docker
+.docker/
+
+# E2E
+playwright-report/
+test-results/
+playwright/.cache/
+
+docs/

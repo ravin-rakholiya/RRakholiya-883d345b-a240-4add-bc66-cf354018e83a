@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": []
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"],
+      "outputs": ["{options.outputPath}"],
+      "configurations": {
+        "production": {},
+        "development": {}
+      }
+    },
+    "lint": {
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "test": {
+      "cache": true,
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "configurations": {
+        "ci": {
+          "ci": true
+        }
+      }
+    },
+    "e2e": {
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "outputs": ["{workspaceRoot}/dist/.e2e/{projectRoot}"]
+    }
+  },
+  "defaultBase": "main",
+  "generators": {
+    "@nx/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "playwright"
+    },
+    "@nx/angular:component": {
+      "style": "scss"
+    },
+    "@nx/nest:application": {
+      "unitTestRunner": "jest"
+    }
+  }
+}

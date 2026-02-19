@@ -1,0 +1,9 @@
+@if (toast.hasToasts()) {
+  <div class="toast-container" role="status" aria-live="polite">
+    @for (t of toast.items(); track t.id) {
+      <div class="toast toast--{{ t.type }}" (click)="toast.dismiss(t.id)">
+        {{ t.message }}
+      </div>
+    }
+  </div>
+}

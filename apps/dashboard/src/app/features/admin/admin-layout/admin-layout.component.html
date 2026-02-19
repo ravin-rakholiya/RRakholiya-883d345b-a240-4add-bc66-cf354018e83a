@@ -1,0 +1,14 @@
+<app-dashboard-layout>
+  <h1 header-title>Admin</h1>
+
+  <div class="admin">
+    <nav class="admin-nav">
+      <a routerLink="/admin/audit" routerLinkActive="active" class="nav-item">Audit Log</a>
+      <a routerLink="/admin/organizations/new" routerLinkActive="active" class="nav-item">Create Organization</a>
+      <a routerLink="/admin/users/new" routerLinkActive="active" class="nav-item">Create User</a>
+    </nav>
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</app-dashboard-layout>

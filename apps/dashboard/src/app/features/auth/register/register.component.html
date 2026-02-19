@@ -1,0 +1,27 @@
+<div class="auth-card">
+  <h1>Register</h1>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password" />
+      <span class="hint">Min 8 chars, upper, lower, number</span>
+    </div>
+    <div class="field">
+      <label for="firstName">First name</label>
+      <input id="firstName" formControlName="firstName" />
+    </div>
+    <div class="field">
+      <label for="lastName">Last name</label>
+      <input id="lastName" formControlName="lastName" />
+    </div>
+    @if (error$ | async; as err) {
+      <p class="error">{{ err }}</p>
+    }
+    <button type="submit" [disabled]="form.invalid">Register</button>
+  </form>
+  <p><a routerLink="/login">Sign in</a></p>
+</div>

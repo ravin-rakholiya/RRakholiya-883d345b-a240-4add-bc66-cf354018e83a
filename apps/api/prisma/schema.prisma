@@ -1,0 +1,117 @@
+// Prisma schema for Secure Task Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Run with: npx prisma db seed (from repo root: npx prisma db seed --schema=apps/api/prisma/schema.prisma)
+
+enum RoleEnum {
+  Owner
+  Admin
+  Viewer
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  roleId       String    @map("role_id")
+  organizationId String?  @map("organization_id")
+  isActive     Boolean   @default(true) @map("is_active")
+  deletedAt    DateTime? @map("deleted_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  role         Role      @relation(fields: [roleId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  tasksCreated Task[]    @relation("CreatedBy")
+  tasksAssigned Task[]   @relation("AssignedTo")
+
+  @@index([email])
+  @@index([roleId])
+  @@index([organizationId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        RoleEnum @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users User[]
+
+  @@map("roles")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  parentId  String?  @map("parent_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  parent   Organization?  @relation("OrgHierarchy", fields: [parentId], references: [id])
+  children Organization[] @relation("OrgHierarchy")
+  users    User[]
+  tasks    Task[]
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("organizations")
+}
+
+enum TaskCategory {
+  Work
+  Personal
+  Other
+}
+
+model Task {
+  id             String        @id @default(uuid())
+  title          String
+  description    String?
+  status         TaskStatus    @default(PENDING)
+  priority       Int           @default(0)
+  category       TaskCategory  @default(Other)
+  sortOrder      Int           @default(0) @map("sort_order")
+  createdById    String        @map("created_by_id")
+  assignedToId   String?       @map("assigned_to_id")
+  organizationId String?       @map("organization_id")
+  dueAt          DateTime?     @map("due_at")
+  deletedAt      DateTime?     @map("deleted_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  createdBy   User   @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedTo  User?  @relation("AssignedTo", fields: [assignedToId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([category])
+  @@index([deletedAt])
+  @@index([createdAt])
+  @@index([sortOrder])
+  @@map("tasks")
+}

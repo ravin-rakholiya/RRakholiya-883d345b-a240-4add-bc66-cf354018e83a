@@ -1,0 +1,33 @@
+<div class="form-card">
+  <h2>Create Organization</h2>
+  <p class="intro">Owner only. Create a child organization.</p>
+  @if (loadingOrgs) {
+    <app-skeleton height="120px" />
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" formControlName="name" placeholder="e.g. Engineering" />
+      </div>
+      <div class="field">
+        <label for="parentId">Parent Organization</label>
+        <select id="parentId" formControlName="parentId">
+          <option [ngValue]="null">None (root)</option>
+          @for (org of rootOrgs; track org.id) {
+            <option [ngValue]="org.id">{{ org.name }}</option>
+          }
+        </select>
+      </div>
+      @if (error) {
+        <p class="error">{{ error }}</p>
+      }
+      @if (success) {
+        <p class="success">{{ success }}</p>
+      }
+      <div class="actions">
+        <button type="submit" [disabled]="form.invalid || submitting">Create</button>
+        <a routerLink="/admin/audit" class="link">Cancel</a>
+      </div>
+    </form>
+  }
+</div>

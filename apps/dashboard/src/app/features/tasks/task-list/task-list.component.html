@@ -1,0 +1,98 @@
+<app-dashboard-layout>
+  <h1 header-title>Tasks</h1>
+  <div class="page">
+    <div class="page-header">
+      @if ((user$ | async)?.role !== 'Viewer') {
+        <button type="button" class="btn btn-primary" (click)="showForm = true">New task</button>
+      }
+    </div>
+    <div class="toolbar">
+      <select class="select" [value]="filterStatus()" (change)="filterStatus.set($any($event.target).value)">
+        @for (s of statusOptions; track s) {
+          <option [value]="s">{{ s === 'All' ? 'All statuses' : s }}</option>
+        }
+      </select>
+      <select class="select" [value]="filterCategory()" (change)="filterCategory.set($any($event.target).value)">
+        @for (c of categoryOptions; track c) {
+          <option [value]="c">{{ c === 'All' ? 'All categories' : c }}</option>
+        }
+      </select>
+      <select class="select" [value]="sortBy()" (change)="sortBy.set($any($event.target).value)">
+        @for (o of sortOptions; track o.value) {
+          <option [value]="o.value">{{ o.label }}</option>
+        }
+      </select>
+    </div>
+    @if (showForm) {
+      <div class="card form-card">
+        <h3>New task</h3>
+        <div class="form-row">
+          <input [value]="taskTitle()" (input)="taskTitle.set($any($event.target).value)" placeholder="Title" class="input" />
+          <input [value]="taskDesc()" (input)="taskDesc.set($any($event.target).value)" placeholder="Description (optional)" class="input" />
+          <select [value]="taskCategory()" (change)="taskCategory.set($any($event.target).value)" class="input select">
+            @for (c of ['Work', 'Personal', 'Other']; track c) {
+              <option [value]="c">{{ c }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="cancelForm()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="create()" [disabled]="!taskTitle().trim()">Create</button>
+        </div>
+      </div>
+    }
+    @if (loading$ | async) {
+      <div class="task-skeletons">
+        @for (i of [1,2,3]; track i) {
+          <app-skeleton height="88px" />
+        }
+      </div>
+    } @else {
+      <ul class="task-list" cdkDropList [cdkDropListData]="currentList()" (cdkDropListDropped)="onDrop($event)" [cdkDropListDisabled]="(user$ | async)?.role === 'Viewer'">
+        @for (t of filteredTasks$ | async; track $any(t).id) {
+          <li class="task-card" cdkDrag [class.task-card--completed]="$any(t).status === 'COMPLETED'">
+            @if ((user$ | async)?.role !== 'Viewer') {
+              <span class="drag-handle" cdkDragHandle aria-label="Drag to reorder">&#8942;&#8942;</span>
+            }
+            <div class="task-card__body">
+              <div class="task-card__meta">
+                <span class="task-card__status task-card__status--{{ statusClass($any(t).status) }}" [attr.title]="$any(t).status">{{ $any(t).status }}</span>
+                @if ($any(t).category) {
+                  <span class="task-card__category">{{ $any(t).category }}</span>
+                }
+              </div>
+              <h3 class="task-card__title">{{ $any(t).title }}</h3>
+              @if ($any(t).description) {
+                <p class="task-card__desc">{{ $any(t).description }}</p>
+              }
+            </div>
+            @if ((user$ | async)?.role !== 'Viewer') {
+              <div class="task-card__actions">
+                <select class="select select--sm" [ngModel]="$any(t).status" (ngModelChange)="updateStatus($any(t).id, $event)" (click)="$event.stopPropagation()" title="Change status">
+                  @for (opt of taskStatusOptions; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+                <button type="button" class="btn btn-sm btn-ghost btn-danger" (click)="openDeleteConfirm($any(t).id)" aria-label="Delete task">Delete</button>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+      @if ((filteredTasks$ | async)?.length === 0) {
+        <div class="empty-state">
+          <p class="empty-state__text">No tasks match the current filters.</p>
+          @if ((user$ | async)?.role !== 'Viewer') {
+            <button type="button" class="btn btn-secondary" (click)="showForm = true">Create a task</button>
+          }
+        </div>
+      }
+    }
+    @if (error$ | async; as err) {
+      <p class="error-message">{{ err }}</p>
+    }
+  </div>
+  @if (deleteTargetId()) {
+    <app-confirm-modal title="Delete task" message="This task will be removed. You can't undo this." confirmLabel="Delete" (confirm)="confirmDelete()" (cancel)="deleteTargetId.set(null)" />
+  }
+</app-dashboard-layout>

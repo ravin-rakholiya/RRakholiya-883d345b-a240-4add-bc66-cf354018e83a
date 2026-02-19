@@ -1,0 +1,13 @@
+{
+  "name": "data",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/data/src",
+  "tags": ["scope:shared"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": { "lintFilePatterns": ["libs/data/**/*.ts"] }
+    }
+  }
+}
