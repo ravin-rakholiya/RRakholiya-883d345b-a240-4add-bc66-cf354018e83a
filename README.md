@@ -107,6 +107,8 @@ Runs Prisma generate, then both API and dashboard.
 ## API Documentation
 
 PostMan Collection: `https://documenter.getpostman.com/view/27946057/2sBXcEif2F`
+DataBase Architecture: `https://drive.google.com/file/d/1dhcY4k8W7Wa5zmzaL3S8B7Wr4i0EF7so/view?usp=sharing`
+ERD Diagram: `https://drive.google.com/file/d/1DThfg2GsK2lCdlEnP8iZnRH45mwoSJg4/view?usp=sharing`
 
 Base URL: `http://localhost:3333/api` (or your `PORT` and `API_PREFIX`).
 
